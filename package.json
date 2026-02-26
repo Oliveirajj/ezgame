@@ -1,0 +1,13 @@
+{
+  "name": "academic-game",
+  "version": "1.0.0",
+  "description": "学术Title合成游戏 - 合并学术Title，目标是获得诺贝尔奖",
+  "scripts": {
+    "dev": "npx serve .",
+    "build": "echo 'No build needed for static site'"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

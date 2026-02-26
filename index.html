@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1.0">
+    <title>这不是组会摸鱼小游戏</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- 启动画面 -->
+    <div id="start-screen">
+        <div class="start-content">
+            <h1>📚 学术合成大作战</h1>
+            <p class="subtitle">合并学术Title，成为学术巨头！</p>
+            <div class="start-icons">
+                <span>🎓</span>
+                <span>📚</span>
+                <span>🎒</span>
+                <span>🔬</span>
+                <span>📖</span>
+                <span>👔</span>
+                <span>👑</span>
+                <span>🏆</span>
+            </div>
+            <div class="mode-selection">
+                <button class="mode-btn normal-mode-btn" id="normal-mode-btn" onclick="startGame('normal')">
+                    <span class="mode-icon">📖</span>
+                    <span class="mode-name">普通模式</span>
+                    <span class="mode-desc">经典玩法</span>
+                </button>
+                <button class="mode-btn hextech-mode-btn" id="hextech-mode-btn" onclick="startGame('hextech')">
+                    <span class="mode-icon">⚡</span>
+                    <span class="mode-name">海克斯模式</span>
+                    <span class="mode-desc">随机增益</span>
+                </button>
+            </div>
+            <p class="tips">选择游戏模式开始</p>
+        </div>
+    </div>
+
+    <div id="game-container">
+        <!-- 游戏标题 -->
+        <div id="header">
+            <h1>📚 这不是组会摸鱼小游戏</h1>
+            <p>合并学术Title，成为学术巨头！</p>
+        </div>
+
+        <!-- 分数显示 -->
+        <div id="score-board">
+            <div class="score-item">
+                <span class="label">当前分数</span>
+                <span id="score">0</span>
+            </div>
+            <div class="score-item">
+                <span class="label">最高Title</span>
+                <span id="highest-title">本科生</span>
+            </div>
+            <div class="button-group">
+                <button id="pause-btn" class="mute-btn" title="暂停">⏸️</button>
+                <button id="mute-btn" class="mute-btn" title="静音">🔊</button>
+            </div>
+        </div>
+
+        <!-- 游戏画布区域 -->
+        <div id="canvas-wrapper">
+            <canvas id="game-canvas"></canvas>
+
+            <!-- 模式指示器 -->
+            <div id="mode-indicator" class="hidden">
+                <span id="mode-badge" class="mode-badge"></span>
+            </div>
+
+            <!-- 下一个物品预览 -->
+            <div id="next-preview">
+                <span class="preview-label">下一个</span>
+                <div id="next-item">🎓</div>
+            </div>
+            
+            <!-- 游戏结束弹窗 -->
+            <div id="game-over" class="hidden">
+                <div class="modal-content">
+                    <h2>游戏结束!</h2>
+                    <p>最终Title: <span id="final-title">本科生</span></p>
+                    <p>最终分数: <span id="final-score">0</span></p>
+                    <p>历史最高: <span id="best-score">0</span></p>
+                    <button id="restart-btn">再来一局</button>
+                </div>
+            </div>
+            
+            <!-- 暂停界面 -->
+            <div id="pause-overlay" class="hidden">
+                <div class="modal-content">
+                    <h2>游戏暂停</h2>
+                    <p>休息一下吧~</p>
+                    <button id="continue-btn">继续游戏</button>
+                    <button id="pause-restart-btn">重新开始</button>
+                </div>
+            </div>
+            
+            <!-- 再来一次快捷按钮 -->
+            <button id="quick-restart-btn" class="quick-btn" title="重来">🔄</button>
+        </div>
+
+        <!-- 操作提示 -->
+        <div id="tips">
+            <p>💡 点击屏幕或按住鼠标来控制物品下落位置</p>
+        </div>
+
+        <!-- 底部说明 -->
+        <div id="legend">
+            <h3>Title图鉴</h3>
+            <div id="title-list">
+                <!-- 动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 引入Matter.js物理引擎 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js"></script>
+    <!-- 海克斯模式系统 -->
+    <script src="hextech.js"></script>
+    <script src="game.js"></script>
+</body>
+</html>
