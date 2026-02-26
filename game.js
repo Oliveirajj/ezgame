@@ -338,12 +338,28 @@ function setupResponsive() {
         const windowHeight = window.innerHeight;
         
         // 移动端全屏适配
-        if (windowWidth < 400) {
+        if (windowWidth < 480) {
+            // 全屏模式：画布占满整个容器
             wrapper.style.width = '100%';
-            wrapper.style.maxWidth = '320px';
+            wrapper.style.height = '100%';
+            wrapper.style.maxWidth = 'none';
+            
+            // 调整 canvas 尺寸为实际显示尺寸
+            const canvas = document.getElementById('game-canvas');
+            canvas.style.width = '100%';
+            canvas.style.height = '100%';
+            
+            // 容器全屏
             container.style.maxWidth = '100%';
+            container.style.width = '100%';
+            container.style.height = '100%';
             container.style.borderRadius = '0';
-            container.style.padding = '10px';
+            container.style.padding = '0';
+        } else {
+            // 桌面端保持原有样式
+            wrapper.style.width = '';
+            wrapper.style.maxWidth = '320px';
+            wrapper.style.aspectRatio = '320 / 600';
         }
     }
     

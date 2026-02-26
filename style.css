@@ -1340,4 +1340,166 @@ body::before {
 .water-lower-effect {
     animation: waterLower 1s ease-out forwards;
 }
+
+/* ==================== 移动端全屏游戏模式 ==================== */
+/* 当屏幕宽度小于 480px 时启用全屏游戏模式 */
+@media (max-width: 480px) {
+    /* 让 body 内容全屏，无边距 */
+    body {
+        padding: 0;
+        margin: 0;
+        overflow: hidden;
+        background: #0f172a;
+    }
+
+    /* 游戏容器全屏 */
+    #game-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        max-width: none;
+        padding: 0;
+        border-radius: 0;
+        box-shadow: none;
+        background: #0f172a;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* 隐藏标题区域 */
+    #header {
+        display: none;
+    }
+
+    /* 隐藏操作提示 */
+    #tips {
+        display: none;
+    }
+
+    /* 隐藏底部图鉴 */
+    #legend {
+        display: none;
+    }
+
+    /* 分数板简化，固定在顶部 */
+    #score-board {
+        position: fixed;
+        top: 10px;
+        left: 10px;
+        right: 10px;
+        z-index: 100;
+        margin: 0;
+        padding: 8px 12px;
+        background: rgba(0, 0, 0, 0.6);
+        border-radius: 10px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    #score-board .score-item .label {
+        display: none;
+    }
+
+    #score-board .score-item span:last-child {
+        font-size: 1rem;
+    }
+
+    #score-board .button-group {
+        position: absolute;
+        right: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+
+    /* 游戏画布区域全屏 */
+    #canvas-wrapper {
+        flex: 1;
+        width: 100%;
+        max-width: none;
+        margin: 0;
+        border-radius: 0;
+        aspect-ratio: auto;
+        position: relative;
+    }
+
+    #game-canvas {
+        width: 100% !important;
+        height: 100% !important;
+    }
+
+    /* 模式指示器位置调整 */
+    #mode-indicator {
+        top: 60px;
+        right: 10px;
+    }
+
+    /* 下一个物品预览位置调整 */
+    #next-preview {
+        top: 60px;
+        left: 10px;
+        right: auto;
+        padding: 5px 8px;
+    }
+
+    /* 快捷按钮位置调整 */
+    .quick-btn {
+        top: 60px;
+        left: auto;
+        right: 10px;
+    }
+
+    /* 暂停按钮位置调整 */
+    #pause-btn {
+        display: none;
+    }
+
+    /* 静音按钮保留 */
+    #mute-btn {
+        position: fixed;
+        top: 10px;
+        right: 10px;
+        z-index: 101;
+    }
+
+    /* 模式选择按钮调整 */
+    .mode-selection {
+        gap: 15px;
+    }
+
+    .mode-btn {
+        min-width: 120px;
+        padding: 15px;
+    }
+
+    .mode-btn .mode-icon {
+        font-size: 2rem;
+    }
+
+    .mode-btn .mode-name {
+        font-size: 1rem;
+    }
+
+    .mode-btn .mode-desc {
+        font-size: 0.7rem;
+    }
+}
+
+/* 更小屏幕进一步优化 */
+@media (max-width: 360px) {
+    #score-board {
+        padding: 6px 10px;
+    }
+
+    #score-board .score-item span:last-child {
+        font-size: 0.9rem;
+    }
+
+    .mode-btn {
+        min-width: 100px;
+        padding: 12px;
+    }
+}
 }
