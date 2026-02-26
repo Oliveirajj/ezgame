@@ -310,10 +310,12 @@ function initGame() {
     // 设置画布实际尺寸（适配屏幕）
     const wrapper = document.getElementById('canvas-wrapper');
     
-    // 移动端：全屏显示，不需要缩放
+    // 移动端：全屏显示
     if (window.innerWidth < 480) {
         canvas.style.width = '100%';
         canvas.style.height = '100%';
+        // 锁定 wrapper 高度，防止滚动
+        wrapper.style.height = CONFIG.canvasHeight + 'px';
     } else {
         // 桌面端：保持原有缩放逻辑
         const scale = wrapper.clientWidth / CONFIG.canvasWidth;
@@ -348,20 +350,26 @@ function adjustGameSize() {
     const windowWidth = window.innerWidth;
     const windowHeight = window.innerHeight;
     
-    // 移动端：使用屏幕实际尺寸
+    // 移动端：根据可见高度来计算
     if (windowWidth < 480) {
-        CONFIG.canvasWidth = windowWidth;
-        CONFIG.canvasHeight = windowHeight;
+        // 获取 canvas-wrapper 的位置，计算可见高度
+        const wrapper = document.getElementById('canvas-wrapper');
+        const rect = wrapper.getBoundingClientRect();
+        const visibleHeight = windowHeight - rect.top;
         
-        // 全屏游戏区域，无边距
-        CONFIG.gameLeft = 0;
-        CONFIG.gameRight = windowWidth;
-        CONFIG.gameTop = 60;  // 保留顶部状态栏空间
-        CONFIG.gameBottom = windowHeight;
-        CONFIG.spawnY = 40;
+        // 游戏物理尺寸：宽度=屏幕宽度，高度=可见高度
+        CONFIG.canvasWidth = windowWidth;
+        CONFIG.canvasHeight = visibleHeight;
+        
+        // 游戏区域边界
+        CONFIG.gameLeft = 10;
+        CONFIG.gameRight = windowWidth - 10;
+        CONFIG.gameTop = 50;
+        CONFIG.gameBottom = visibleHeight - 10;
+        CONFIG.spawnY = 35;
         
         // 物品大小也根据屏幕调整
-        CONFIG.baseRadius = Math.max(18, windowWidth / 20);
+        CONFIG.baseRadius = Math.max(16, windowWidth / 22);
         CONFIG.radiusIncrement = CONFIG.baseRadius * 0.12;
     } else {
         // 桌面端：使用固定尺寸
@@ -388,23 +396,26 @@ function setupResponsive() {
         
         // 移动端全屏适配
         if (windowWidth < 480) {
-            // 全屏模式：画布占满整个容器
-            wrapper.style.width = '100%';
-            wrapper.style.height = '100%';
-            wrapper.style.maxWidth = 'none';
-            wrapper.style.aspectRatio = 'auto';
+            // 计算可见高度
+            const rect = wrapper.getBoundingClientRect();
+            const visibleHeight = windowHeight - rect.top;
             
-            // 调整 canvas 渲染尺寸
+            // 全屏模式
+            wrapper.style.width = '100%';
+            wrapper.style.height = visibleHeight + 'px';
+            wrapper.style.maxWidth = 'none';
+            
+            // 调整 canvas 样式
             const canvas = document.getElementById('game-canvas');
             canvas.style.width = '100%';
             canvas.style.height = '100%';
             
             // 更新物理引擎的渲染尺寸
             if (render) {
-                render.canvas.width = windowWidth;
-                render.canvas.height = windowHeight;
-                render.options.width = windowWidth;
-                render.options.height = windowHeight;
+                render.canvas.width = CONFIG.canvasWidth;
+                render.canvas.height = CONFIG.canvasHeight;
+                render.options.width = CONFIG.canvasWidth;
+                render.options.height = CONFIG.canvasHeight;
             }
             
             // 容器全屏
