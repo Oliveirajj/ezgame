@@ -111,6 +111,24 @@ body {
     color: #e67e22 !important;
 }
 
+/* 状态提示（等级+时间） */
+#status-tips {
+    text-align: center;
+    margin-bottom: 10px;
+    min-height: 24px;
+}
+
+#status-tips .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 4px 12px;
+    background: rgba(0, 0, 0, 0.8);
+    border-radius: 20px;
+    font-size: 0.8rem;
+    color: #fff;
+}
+
 /* 静音按钮 */
 .mute-btn {
     background: none;
@@ -1373,6 +1391,16 @@ body::before {
         display: none;
     }
 
+    /* 状态提示在移动端 */
+    #status-tips {
+        position: fixed;
+        top: 55px;
+        left: 50%;
+        transform: translateX(-50%);
+        z-index: 100;
+        margin: 0;
+    }
+
     /* 隐藏操作提示 */
     #tips {
         display: none;
@@ -1500,6 +1528,16 @@ body::before {
     .mode-btn {
         min-width: 100px;
         padding: 12px;
+    }
+
+    /* 状态提示移动端适配 */
+    #status-tips {
+        margin-bottom: 5px;
+    }
+
+    #status-tips .status-badge {
+        font-size: 0.75rem;
+        padding: 3px 10px;
     }
 }
 }

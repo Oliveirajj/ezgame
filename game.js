@@ -874,12 +874,12 @@ function dropItem() {
         updateTimeLimitDisplay();
     }
     
-    // 延迟生成下一个物品
+    // 立即生成下一个物品（用户可以快速点击）
     setTimeout(() => {
         if (!gameState.isGameOver && !gameState.isPaused) {
             spawnNewItem();
         }
-    }, 1000);
+    }, 200);  // 缩短为200ms，让玩家可以快速连续点击
 }
 
 // ==================== 更新分数显示 ====================
@@ -1522,6 +1522,9 @@ function loadAchievements() {
 }
 
 // ==================== 里程碑提示 ====================
+let milestoneHideTimer = null;
+let lastMilestoneProgress = 0;
+
 function showMilestoneHint() {
     // 找到最近的一个未解锁成就
     const nextAchievement = ACHIEVEMENTS.find(a => !a.unlocked);
@@ -1550,6 +1553,11 @@ function showMilestoneHint() {
         progress = (current / target) * 100;
     }
     
+    // 只有进度变化时才显示
+    const progressKey = `${nextAchievement.id}:${current}`;
+    if (progressKey === lastMilestoneProgress) return;
+    lastMilestoneProgress = progressKey;
+    
     // 显示里程碑提示
     const wrapper = document.getElementById('canvas-wrapper');
     let milestoneEl = document.getElementById('milestone-hint');
@@ -1563,13 +1571,15 @@ function showMilestoneHint() {
             left: 50%;
             transform: translateX(-50%);
             padding: 8px 15px;
-            background: rgba(0, 0, 0, 0.7);
+            background: rgba(0, 0, 0, 0.8);
             border-radius: 10px;
             font-size: 0.75rem;
             color: #fff;
             text-align: center;
             pointer-events: none;
             z-index: 50;
+            opacity: 0;
+            transition: opacity 0.3s ease;
         `;
         wrapper.appendChild(milestoneEl);
     }
@@ -1581,6 +1591,14 @@ function showMilestoneHint() {
         </div>
         <div style="margin-top: 3px; font-size: 0.7rem; color: #aaa;">${current}/${target}</div>
     `;
+    
+    // 显示并3秒后隐藏
+    milestoneEl.style.opacity = '1';
+    
+    if (milestoneHideTimer) clearTimeout(milestoneHideTimer);
+    milestoneHideTimer = setTimeout(() => {
+        milestoneEl.style.opacity = '0';
+    }, 3000);
 }
 
 // ==================== 难度曲线系统 ====================
@@ -1600,29 +1618,25 @@ function initDifficultySystem() {
 
 // 创建时间限制显示
 function createTimeLimitDisplay() {
-    const wrapper = document.getElementById('canvas-wrapper');
+    const statusTips = document.getElementById('status-tips');
     let timeDisplay = document.getElementById('time-limit-display');
     
     if (!timeDisplay) {
         timeDisplay = document.createElement('div');
         timeDisplay.id = 'time-limit-display';
+        timeDisplay.className = 'status-badge';
         timeDisplay.style.cssText = `
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
             padding: 5px 15px;
             background: rgba(0, 0, 0, 0.7);
-            border-radius: 15px;
-            font-size: 0.9rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
             font-weight: bold;
             color: #fff;
-            z-index: 50;
-            display: flex;
+            display: inline-flex;
             align-items: center;
             gap: 8px;
         `;
-        wrapper.appendChild(timeDisplay);
+        statusTips.appendChild(timeDisplay);
     }
 }
 
