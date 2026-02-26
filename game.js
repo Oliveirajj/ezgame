@@ -263,6 +263,9 @@ function toggleMute() {
 function initGame() {
     console.log('🎮 初始化游戏...');
     
+    // 动态设置游戏尺寸（移动端全屏）
+    adjustGameSize();
+    
     // 初始化音频和分数存储
     initAudio();
     initScoreStorage();
@@ -293,6 +296,10 @@ function initGame() {
         }
     });
     
+    // 设置 canvas 元素的实际像素尺寸
+    canvas.width = CONFIG.canvasWidth;
+    canvas.height = CONFIG.canvasHeight;
+    
     // 启动物理引擎（必须在渲染器创建之后）
     runner = Runner.create();
     Runner.run(runner, engine);
@@ -302,9 +309,17 @@ function initGame() {
     
     // 设置画布实际尺寸（适配屏幕）
     const wrapper = document.getElementById('canvas-wrapper');
-    const scale = wrapper.clientWidth / CONFIG.canvasWidth;
-    canvas.style.width = '100%';
-    canvas.style.height = CONFIG.canvasHeight * scale + 'px';
+    
+    // 移动端：全屏显示，不需要缩放
+    if (window.innerWidth < 480) {
+        canvas.style.width = '100%';
+        canvas.style.height = '100%';
+    } else {
+        // 桌面端：保持原有缩放逻辑
+        const scale = wrapper.clientWidth / CONFIG.canvasWidth;
+        canvas.style.width = '100%';
+        canvas.style.height = CONFIG.canvasHeight * scale + 'px';
+    }
     
     // 创建边界
     createWalls();
@@ -328,6 +343,40 @@ function initGame() {
     console.log('✅ 游戏初始化完成');
 }
 
+// ==================== 动态调整游戏尺寸 ====================
+function adjustGameSize() {
+    const windowWidth = window.innerWidth;
+    const windowHeight = window.innerHeight;
+    
+    // 移动端：使用屏幕实际尺寸
+    if (windowWidth < 480) {
+        CONFIG.canvasWidth = windowWidth;
+        CONFIG.canvasHeight = windowHeight;
+        
+        // 全屏游戏区域，无边距
+        CONFIG.gameLeft = 0;
+        CONFIG.gameRight = windowWidth;
+        CONFIG.gameTop = 60;  // 保留顶部状态栏空间
+        CONFIG.gameBottom = windowHeight;
+        CONFIG.spawnY = 40;
+        
+        // 物品大小也根据屏幕调整
+        CONFIG.baseRadius = Math.max(18, windowWidth / 20);
+        CONFIG.radiusIncrement = CONFIG.baseRadius * 0.12;
+    } else {
+        // 桌面端：使用固定尺寸
+        CONFIG.canvasWidth = 360;
+        CONFIG.canvasHeight = 700;
+        CONFIG.gameLeft = 20;
+        CONFIG.gameRight = 340;
+        CONFIG.gameTop = 80;
+        CONFIG.gameBottom = 680;
+        CONFIG.spawnY = 50;
+        CONFIG.baseRadius = 22;
+        CONFIG.radiusIncrement = 2.5;
+    }
+}
+
 // ==================== 屏幕适配 ====================
 function setupResponsive() {
     const wrapper = document.getElementById('canvas-wrapper');
@@ -343,11 +392,20 @@ function setupResponsive() {
             wrapper.style.width = '100%';
             wrapper.style.height = '100%';
             wrapper.style.maxWidth = 'none';
+            wrapper.style.aspectRatio = 'auto';
             
-            // 调整 canvas 尺寸为实际显示尺寸
+            // 调整 canvas 渲染尺寸
             const canvas = document.getElementById('game-canvas');
             canvas.style.width = '100%';
             canvas.style.height = '100%';
+            
+            // 更新物理引擎的渲染尺寸
+            if (render) {
+                render.canvas.width = windowWidth;
+                render.canvas.height = windowHeight;
+                render.options.width = windowWidth;
+                render.options.height = windowHeight;
+            }
             
             // 容器全屏
             container.style.maxWidth = '100%';
@@ -360,6 +418,7 @@ function setupResponsive() {
             wrapper.style.width = '';
             wrapper.style.maxWidth = '320px';
             wrapper.style.aspectRatio = '320 / 600';
+            wrapper.style.height = '';
         }
     }
     
