@@ -369,7 +369,7 @@ function adjustGameSize() {
         CONFIG.spawnY = 35;
         
         // 物品大小也根据屏幕调整
-        CONFIG.baseRadius = Math.max(16, windowWidth / 22);
+        CONFIG.baseRadius = Math.max(20, windowWidth / 20);
         CONFIG.radiusIncrement = CONFIG.baseRadius * 0.12;
     } else {
         // 桌面端：使用固定尺寸
@@ -380,7 +380,7 @@ function adjustGameSize() {
         CONFIG.gameTop = 80;
         CONFIG.gameBottom = 680;
         CONFIG.spawnY = 50;
-        CONFIG.baseRadius = 22;
+        CONFIG.baseRadius = 26;
         CONFIG.radiusIncrement = 2.5;
     }
 }
@@ -567,7 +567,10 @@ function spawnNewItem() {
 
 // ==================== 获取等级对应的半径 ====================
 function getRadiusForLevel(level) {
-    return CONFIG.baseRadius + (level - 1) * CONFIG.radiusIncrement;
+    // 使用指数增长，让高等级球明显更大
+    // Level 1 = base, Level 2 = base*1.3, Level 10 = base*2.5+
+    const growthFactor = 1 + (level - 1) * 0.35;
+    return CONFIG.baseRadius * growthFactor;
 }
 
 // ==================== 设置碰撞检测 ====================
@@ -1217,20 +1220,19 @@ function checkGameOver() {
     
     let isOverTop = false;
     
-    // 检查是否有物品超过顶部边界
+    // 检查是否有物品超过顶部边界（红虚线位置）
+    const dangerLine = CONFIG.gameTop + 20;
+    
     for (let item of items) {
         // 跳过正在下落的物品和当前控制的物品
         if (item === gameState.currentItem || item.isStatic) continue;
         
-        // 检查速度（只有静止的物品才算）
-        const speed = Math.sqrt(item.velocity.x ** 2 + item.velocity.y ** 2);
-        
-        // 如果物品在顶部区域且几乎静止
-        if (item.position.y < CONFIG.gameTop + 20 && speed < 0.5) {
+        // 如果物品超过红线（不再要求静止，只要在上面就算）
+        if (item.position.y < dangerLine) {
             gameOverCheckCount++;
             
-            // 连续检查60帧（约1秒）都满足条件才判定游戏结束
-            if (gameOverCheckCount > 60) {
+            // 持续30帧（约0.5秒）就判定游戏结束，不再要求静止
+            if (gameOverCheckCount > 30) {
                 isOverTop = true;
                 break;
             }
